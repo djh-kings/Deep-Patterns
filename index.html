@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deep Patterns — KCS Computer Science</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================ RESET & BASE */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;scroll-behavior:smooth}
+::selection{background:rgba(245,197,24,.28);color:#fff}
+body{background:#0d0d14;color:#e9e9f0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;line-height:1.7;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,p,pre{margin:0}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer}
+img{max-width:100%}
+
+/* ============================================================ VARIABLES */
+:root{
+  --bg:#0d0d14;--panel:#13131c;--panel-raised:#181823;--panel-dark:#0a0a10;
+  --text-primary:#f6f6fb;--text-body:#e9e9f0;--text-dim:#d4d4dd;--text-muted:#c7c7d2;
+  --text-faint:#93939f;--text-ghost:#6f6f7b;--text-subtle:#5e5e6a;
+  --border:rgba(255,255,255,.08);--border-mid:rgba(255,255,255,.12);--border-bright:rgba(255,255,255,.18);
+  --nav-h:58px;
+}
+.sn-section{--accent:#f5c518;--accent-lift:#f7d24e;--accent-border:rgba(245,197,24,.22);--accent-border-card:rgba(245,197,24,.28)}
+.gw-section{--accent:#5a93d4;--accent-lift:#5a93d4;--accent-border:rgba(90,147,212,.22);--accent-border-card:rgba(90,147,212,.28)}
+.ts-section{--accent:#e9612f;--accent-lift:#e9612f;--accent-border:rgba(233,97,47,.22);--accent-border-card:rgba(233,97,47,.28)}
+
+/* ============================================================ NAV */
+#main-nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);
+  background:rgba(13,13,20,.94);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 40px;gap:28px;
+}
+.nav-brand{font-family:'Zilla Slab',serif;font-weight:700;font-size:17px;color:#f6f6fb;letter-spacing:-.01em;flex-shrink:0}
+.nav-spacer{flex:1}
+.nav-link{font-family:'IBM Plex Mono',monospace;font-size:13px;color:#93939f;padding-bottom:2px;border-bottom:1px solid transparent;white-space:nowrap;transition:color .12s,border-color .12s;cursor:pointer}
+.nav-link:hover{color:#e9e9f0}
+@media(max-width:767px){
+  #main-nav{padding:0 16px;gap:18px;overflow-x:auto}
+  .nav-brand{font-size:15px}
+  .nav-spacer{display:none}
+  .nav-link{font-size:11px}
+}
+
+/* ============================================================ MAIN */
+main{padding-top:var(--nav-h)}
+
+/* ============================================================ LANDING */
+#landing{padding:80px 0 100px}
+.land-inner{max-width:1180px;margin:0 auto;padding:0 40px}
+.land-kicker{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#93939f;margin-bottom:22px}
+.land-title{font-family:'Zilla Slab',serif;font-weight:600;font-size:72px;line-height:.98;letter-spacing:-.015em;color:#f6f6fb;margin-bottom:22px}
+.land-desc{font-size:22px;line-height:1.5;max-width:680px;color:#d4d4dd;margin-bottom:12px}
+.land-note{font-family:'IBM Plex Mono',monospace;font-size:14px;color:#6f6f7b;margin-bottom:54px}
+.painting-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:960px}
+.pcard{display:block;background:#101019;border:1px solid var(--bc,rgba(255,255,255,.1));transition:border-color .18s}
+.pcard:hover{border-color:var(--ca,rgba(255,255,255,.25))}
+.pcard-thumb{height:130px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pcard-thumb span{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#6f6f7b}
+.pcard-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}
+.pcard:hover .pcard-thumb img{transform:scale(1.04)}
+.pcard-body{padding:18px 18px 20px}
+.pcard-title{font-family:'Zilla Slab',serif;font-weight:600;font-size:20px;color:#f6f6fb;margin-bottom:4px}
+.pcard-meta{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#93939f;margin-bottom:12px}
+.pcard-algo{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ca)}
+.sn-card{--bc:rgba(245,197,24,.28);--ca:#f5c518}
+.sn-card .pcard-thumb{background:repeating-linear-gradient(135deg,#15110a,#15110a 8px,#181206 8px,#181206 16px);border-bottom-color:rgba(245,197,24,.18)}
+.gw-card{--bc:rgba(90,147,212,.28);--ca:#5a93d4}
+.gw-card .pcard-thumb{background:repeating-linear-gradient(135deg,#0c1622,#0c1622 8px,#0f1c2c 8px,#0f1c2c 16px);border-bottom-color:rgba(90,147,212,.18)}
+.ts-card{--bc:rgba(233,97,47,.28);--ca:#e9612f}
+.ts-card .pcard-thumb{background:repeating-linear-gradient(135deg,#1a0e07,#1a0e07 8px,#20120a 8px,#20120a 16px);border-bottom-color:rgba(233,97,47,.18)}
+@media(max-width:767px){
+  .land-inner{padding:0 20px}
+  .land-title{font-size:46px}
+  .painting-cards{grid-template-columns:1fr}
+}
+
+/* ============================================================ PAINTING SECTIONS */
+.painting-section{border-top:1px solid var(--border)}
+
+.painting-header{max-width:1180px;margin:0 auto;padding:44px 40px 30px;border-bottom:1px solid var(--border)}
+.painting-counter-line{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.painting-counter{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.18em;color:var(--accent)}
+.painting-artist{font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6f6f7b}
+.painting-title{font-family:'Zilla Slab',serif;font-weight:600;font-size:54px;line-height:1;letter-spacing:-.015em;color:#f6f6fb}
+
+.painting-body{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:440px 1fr}
+@media(max-width:1199px){.painting-body{grid-template-columns:1fr}}
+@media(max-width:767px){.painting-header{padding:30px 20px 20px}.painting-title{font-size:36px}}
+
+/* ============================================================ SIM PANEL */
+.sim-panel{
+  border-right:1px solid var(--border);padding:28px;
+  position:sticky;top:var(--nav-h);align-self:start;
+  max-height:calc(100vh - var(--nav-h));overflow-y:auto;
+}
+@media(max-width:1199px){.sim-panel{position:static;border-right:none;border-bottom:1px solid var(--border);max-height:none;overflow:visible}}
+
+.sub-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+
+.sim-canvas-wrap{position:relative;background:#080810;border:1px solid var(--accent-border,rgba(255,255,255,.1));overflow:hidden;margin-bottom:18px}
+.sim-canvas{display:block;width:100%;height:280px;cursor:crosshair}
+.sim-canvas-lbl{position:absolute;left:10px;bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:#6f6f7b;background:rgba(8,8,16,.78);padding:3px 8px;pointer-events:none}
+
+@media(max-width:1199px){.sim-canvas{height:200px}}
+@media(max-width:767px){.sim-canvas{height:160px}}
+
+/* Sliders */
+.slider-row{margin-bottom:18px}
+.slider-lbl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.slider-name{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#cfcfd8}
+.slider-name em{color:var(--accent);font-style:normal}
+.slider-val{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#f6f6fb}
+.slider-wrap{position:relative;height:20px;display:flex;align-items:center}
+.slider-track{position:absolute;left:0;right:0;height:4px;background:#26262f;pointer-events:none}
+.slider-fill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);pointer-events:none}
+.slider-thumb{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid #080810;box-shadow:0 0 0 1px var(--accent);transform:translate(-50%,-50%);pointer-events:none}
+.slider-input{position:absolute;left:0;right:0;top:0;bottom:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0;padding:0;appearance:none;-webkit-appearance:none}
+
+/* Buttons */
+.sim-btns{display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.btn-primary{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.04em;color:#0d0d14;background:var(--accent);border:none;padding:9px 16px;transition:opacity .12s}
+.btn-primary:hover{opacity:.82}
+.btn-outline{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.04em;color:var(--accent);background:transparent;border:1px solid var(--accent);padding:8px 14px;transition:opacity .12s}
+.btn-outline:hover{opacity:.7}
+.sim-hint{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6f6f7b;margin-left:auto}
+
+/* ============================================================ READING COLUMN */
+.reading-col{padding:28px 40px 48px;min-width:0}
+@media(max-width:1199px){.reading-col{padding:28px}}
+@media(max-width:767px){.reading-col{padding:24px 20px 40px}}
+
+.reading-section{margin-bottom:44px}
+.reading-section:last-child{margin-bottom:0}
+.reading-heading{font-family:'Zilla Slab',serif;font-weight:600;font-size:26px;line-height:1.15;color:#f6f6fb;margin-bottom:16px}
+.reading-body{font-size:18px;line-height:1.7;color:#d4d4dd;margin-bottom:18px}
+.reading-body em{font-style:italic;color:#e9e9f0}
+.reading-body a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.mono-inline{font-family:'IBM Plex Mono',monospace;font-size:.9em;color:var(--accent)}
+
+/* Equation block */
+.eq-block{background:#0a0a10;border:1px solid var(--border);padding:22px 20px;text-align:center;margin-bottom:20px;min-height:64px}
+.eq-display{font-family:'Source Serif 4',serif;font-size:22px;color:#f6f6fb;letter-spacing:.01em;line-height:1.6}
+.eq-display em{font-style:italic}
+.eq-caption{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6f6f7b;margin-top:12px}
+
+/* Code block */
+.code-block{background:#0a0a10;border:1px solid var(--border);border-left:2px solid var(--accent);padding:18px 20px;margin-bottom:36px;overflow-x:auto}
+.code-block pre{font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1.65;color:#cfcfd8}
+.cc{color:#6f6f7b}
+.ck{color:#5a93d4}
+
+/* ============================================================ COMPLEXITY TABLE */
+.ctable-wrap{border:1px solid var(--border-mid);overflow-x:auto;margin-bottom:14px}
+.ctable{width:100%;border-collapse:collapse;min-width:480px}
+.ctable thead tr{background:#0a0a10;border-bottom:1px solid var(--border-bright)}
+.ctable thead th{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#93939f;padding:13px 16px;text-align:right;font-weight:500;white-space:nowrap}
+.ctable thead th:first-child{text-align:left}
+.ctable thead th.ac{color:var(--accent)}
+.ctable tbody tr{border-bottom:1px solid rgba(255,255,255,.06);transition:opacity .3s,transform .3s}
+.ctable tbody tr:last-child{border-bottom:none}
+.ctable tbody td{font-family:'IBM Plex Mono',monospace;font-size:15px;color:#cfcfd8;padding:12px 16px;text-align:right;white-space:nowrap}
+.ctable tbody td:first-child{color:#f6f6fb;text-align:left}
+.ctable tbody td.ac{color:var(--accent)}
+/* The Scream complexity table holds prose, not figures — allow wrapping (overrides nowrap) */
+#ts-table thead th,#ts-table tbody td{white-space:normal;vertical-align:top;line-height:1.5}
+
+.replay-row{display:flex;align-items:center;gap:14px;margin-bottom:36px}
+.replay-note{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6f6f7b}
+
+/* Millennium callout */
+.millennium{background:#0a0a10;border:1px solid var(--accent-border,var(--border));border-left:3px solid var(--accent);padding:20px 22px;margin-bottom:36px}
+.millennium-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.millennium-title{font-family:'Zilla Slab',serif;font-weight:600;font-size:20px;color:#f6f6fb;margin-bottom:10px}
+.millennium-body{font-size:16px;line-height:1.6;color:#c7c7d2}
+
+/* ============================================================ REAL WORLD */
+.rw-grid{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:22px}
+.rw-item{background:#101019;padding:18px 20px;display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:start}
+.rw-label{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);line-height:1.5}
+.rw-text{font-size:16px;line-height:1.55;color:#c7c7d2}
+.rw-question{border-left:2px solid var(--accent);padding:6px 0 6px 18px}
+.rw-question em{font-family:'Source Serif 4',serif;font-style:italic;font-size:19px;line-height:1.5;color:#e9e9f0}
+@media(max-width:767px){.rw-item{grid-template-columns:1fr;gap:6px}}
+
+/* ============================================================ DOWNLOADS */
+#downloads{border-top:1px solid var(--border);padding-bottom:80px}
+.dl-header{max-width:1180px;margin:0 auto;padding:44px 40px 30px;border-bottom:1px solid var(--border)}
+.dl-kicker{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#93939f;margin-bottom:12px}
+.dl-title{font-family:'Zilla Slab',serif;font-weight:600;font-size:34px;color:#f6f6fb}
+.dl-body{max-width:1180px;margin:0 auto;padding:40px 40px 0;display:grid;grid-template-columns:1fr 320px;gap:48px;align-items:start}
+@media(max-width:899px){.dl-body{grid-template-columns:1fr;gap:32px}}
+@media(max-width:767px){.dl-header,.dl-body{padding-left:20px;padding-right:20px}}
+
+.dl-row{display:flex;align-items:center;gap:14px;background:#101019;padding:16px 18px;margin-bottom:10px}
+.dl-sn{border:1px solid rgba(245,197,24,.3)}
+.dl-gw{border:1px solid rgba(90,147,212,.3)}
+.dl-ts{border:1px solid rgba(233,97,47,.3)}
+.dl-name{font-family:'IBM Plex Mono',monospace;font-size:14px;color:#f6f6fb;flex:1}
+.dl-meta{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6f6f7b}
+.dl-btn{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:#0d0d14;padding:8px 16px;border:none;cursor:pointer;white-space:nowrap;transition:opacity .12s;text-decoration:none;display:inline-block}
+.dl-btn:hover{opacity:.82}
+.dl-sn .dl-btn{background:#f5c518}
+.dl-gw .dl-btn{background:#5a93d4}
+.dl-ts .dl-btn{background:#e9612f}
+
+.setup-block{background:#0a0a10;border:1px solid var(--border);padding:16px 18px;margin-bottom:30px}
+.setup-block pre{font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.6;color:#cfcfd8}
+
+.mobile-dl-note{display:none;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#f5c518;margin:10px 0 0;padding:8px 12px;background:rgba(245,197,24,.06);border:1px solid rgba(245,197,24,.2)}
+
+.challenge-section{margin-top:32px}
+.ch-section-hdr{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#5e5e6a;margin-bottom:16px}
+.ch-painting{margin-bottom:28px}
+.ch-painting-name{font-family:'Zilla Slab',serif;font-weight:600;font-size:18px;color:#f6f6fb;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.ch-tier{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:baseline;margin-bottom:8px}
+.ch-tier-lbl{font-family:'IBM Plex Mono',monospace;font-size:12px}
+.ch-tier-txt{font-size:15px;line-height:1.5;color:#c7c7d2}
+.ch-sn .ch-tier-lbl{color:#f5c518}
+.ch-gw .ch-tier-lbl{color:#5a93d4}
+.ch-ts .ch-tier-lbl{color:#e9612f}
+
+/* Mobile downloads */
+.dl-mobile-panel{display:none;background:#0d0d14;border:1px solid var(--border);padding:20px}
+@media(max-width:767px){
+  .dl-btn{display:none}
+  .mobile-dl-note{display:block}
+}
+
+/* ============================================================ FOOTER */
+footer{border-top:1px solid var(--border);max-width:1180px;margin:0 auto;padding:28px 40px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.footer-dots{display:flex;gap:7px;align-items:center}
+.fdot{width:9px;height:9px;border-radius:50%}
+.footer-text{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6f6f7b}
+.footer-spacer{flex:1}
+.footer-right{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5e5e6a}
+@media(max-width:767px){footer{padding:20px}.footer-spacer{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ================================================================ NAV -->
+<nav id="main-nav" aria-label="Main navigation">
+  <span class="nav-brand">Deep Patterns  ·  KCS Computer Science · A-level enrichment 2026</span>
+  <span class="nav-spacer"></span>
+  <a class="nav-link" href="#landing" data-section="landing">Landing</a>
+  <a class="nav-link" href="#starry-night" data-section="starry-night">Starry Night</a>
+  <a class="nav-link" href="#great-wave" data-section="great-wave">Great Wave</a>
+  <a class="nav-link" href="#the-scream" data-section="the-scream">The Scream</a>
+  <a class="nav-link" href="#downloads" data-section="downloads">Downloads</a>
+</nav>
+
+<main>
+
+<!-- ================================================================ LANDING -->
+<section id="landing">
+  <div class="land-inner">
+    <h1 class="land-title">Deep<br>Patterns</h1>
+    <p class="land-desc">Hidden Patterns asked whether you could spot the algorithm. This asks whether you can <em>build&nbsp;it</em>, understand why it scales the way it does, and find it in the real world.</p>
+    <p class="land-note">This will take several sessions. That's the point.</p>
+    <div class="painting-cards">
+      <a class="pcard sn-card" href="#starry-night">
+        <div class="pcard-thumb"><img src="starry-night.jpg" alt="The Starry Night — Van Gogh"></div>
+        <div class="pcard-body">
+          <p class="pcard-title">The Starry Night</p>
+          <p class="pcard-meta">Van Gogh · 1889</p>
+          <p class="pcard-algo">Flow fields → O(n) advection ↓</p>
+        </div>
+      </a>
+      <a class="pcard gw-card" href="#great-wave">
+        <div class="pcard-thumb"><img src="great-wave.jpg" alt="The Great Wave — Hokusai"></div>
+        <div class="pcard-body">
+          <p class="pcard-title">The Great Wave</p>
+          <p class="pcard-meta">Hokusai · c.1831</p>
+          <p class="pcard-algo">Fluid dynamics → $1M open ↓</p>
+        </div>
+      </a>
+      <a class="pcard ts-card" href="#the-scream">
+        <div class="pcard-thumb"><img src="the-scream.jpg" alt="The Scream — Munch"></div>
+        <div class="pcard-body">
+          <p class="pcard-title">The Scream</p>
+          <p class="pcard-meta">Munch · 1893</p>
+          <p class="pcard-algo">Reaction–diffusion → Turing ↓</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ STARRY NIGHT -->
+<section id="starry-night" class="painting-section sn-section">
+  <div class="painting-header">
+    <div class="painting-counter-line">
+      <span class="painting-counter">01 / III paintings</span>
+      <span class="painting-artist">Van Gogh · 1889</span>
+    </div>
+    <h2 class="painting-title">The Starry Night</h2>
+  </div>
+
+  <div class="painting-body">
+    <!-- A — Simulation -->
+    <aside class="sim-panel">
+      <p class="sub-label">A — The simulation</p>
+      <div class="sim-canvas-wrap">
+        <canvas id="sn-canvas" class="sim-canvas" aria-label="Curl-noise flow field simulation"></canvas>
+        <div class="sim-canvas-lbl">curl-noise flow field · drag to pull</div>
+      </div>
+      <!-- n -->
+      <div class="slider-row">
+        <div class="slider-lbl-row">
+          <span class="slider-name">Particles <em>n</em></span>
+          <span class="slider-val" id="sn-n-val">3,000</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="sn-n-fill"></div><div class="slider-thumb" id="sn-n-thumb"></div></div>
+          <input type="range" class="slider-input" id="sn-n" min="500" max="8000" value="3000" step="100">
+        </div>
+      </div>
+      <!-- field scale -->
+      <div class="slider-row">
+        <div class="slider-lbl-row">
+          <span class="slider-name">Field scale <em>ζ</em></span>
+          <span class="slider-val" id="sn-scale-val">0.0040</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="sn-scale-fill"></div><div class="slider-thumb" id="sn-scale-thumb"></div></div>
+          <input type="range" class="slider-input" id="sn-scale" min="1" max="9" value="4" step="1">
+        </div>
+      </div>
+      <!-- speed -->
+      <div class="slider-row">
+        <div class="slider-lbl-row">
+          <span class="slider-name">Flow speed</span>
+          <span class="slider-val" id="sn-speed-val">1.0×</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="sn-speed-fill"></div><div class="slider-thumb" id="sn-speed-thumb"></div></div>
+          <input type="range" class="slider-input" id="sn-speed" min="1" max="10" value="5" step="1">
+        </div>
+      </div>
+      <div class="sim-btns">
+        <button class="btn-primary" id="sn-run">Run</button>
+        <button class="btn-outline" id="sn-reset">↺ Reset</button>
+        <span class="sim-hint">drag to pull flow</span>
+      </div>
+    </aside>
+
+    <!-- B / C / D -->
+    <div class="reading-col">
+
+      <!-- B — Algorithm -->
+      <div class="reading-section">
+        <p class="sub-label">B — The algorithm</p>
+        <h3 class="reading-heading">Particles advected through a curl-noise flow field</h3>
+        <p class="reading-body">Van Gogh's sky is not random. The brushstrokes follow coherent streamlines that swirl, split and rejoin — the visual signature of a <em>vector field</em>. We reproduce it by seeding thousands of massless particles and pushing each one along the local flow, frame after frame.</p>
+        <p class="reading-body">The field itself is the curl of a smooth scalar noise function <em>ψ</em> (the streamfunction). In 2D, the curl of a scalar means velocity = (∂<em>ψ</em>/∂<em>y</em>, −∂<em>ψ</em>/∂<em>x</em>). Taking the curl guarantees the flow is divergence-free — particles circulate rather than pile up — which is exactly why the result reads as turbulence rather than noise.</p>
+        <div class="eq-block">
+          <p class="eq-display"><em>p</em><sub>t+1</sub> &nbsp;=&nbsp; <em>p</em><sub>t</sub> &nbsp;+&nbsp; (∇ × <em>ψ</em>)(<em>p</em><sub>t</sub>) · Δ<em>t</em></p>
+          <p class="eq-caption">Eq. 1 — explicit Euler advection step</p>
+        </div>
+        <div class="code-block"><pre><span class="cc"># one frame — O(n), n particles, no interaction</span>
+<span class="ck">for</span> p <span class="ck">in</span> particles:
+    vx, vy = curl(psi, p.x, p.y)
+    p.x += vx * dt
+    p.y += vy * dt
+    <span class="ck">if</span> offscreen(p):
+        reseed(p)   <span class="cc"># keep density constant</span></pre></div>
+      </div>
+
+      <!-- C — Complexity -->
+      <div class="reading-section">
+        <p class="sub-label">C — The complexity</p>
+        <h3 class="reading-heading">Linear — and that is the whole point</h3>
+        <p class="reading-body">Each particle reads the field once and moves. No particle looks at any other. That independence makes one frame <span class="mono-inline">O(n)</span> — double the particles, double the work, no worse. The table below contrasts that with the <span class="mono-inline">O(n²)</span> cost you would pay if every particle had to consider every other, as a naïve fluid solver does.</p>
+        <div class="ctable-wrap">
+          <table class="ctable" id="sn-table" aria-label="Complexity comparison for flow field simulation">
+            <thead><tr>
+              <th>particles n</th>
+              <th>O(n)</th>
+              <th>O(n log n)</th>
+              <th class="ac">O(n²) naïve</th>
+            </tr></thead>
+            <tbody>
+              <tr data-row><td>100</td><td data-target="100" data-rowi="0">100</td><td data-target="664" data-rowi="0">664</td><td class="ac" data-target="10000" data-rowi="0">10,000</td></tr>
+              <tr data-row><td>1,000</td><td data-target="1000" data-rowi="1">1,000</td><td data-target="9966" data-rowi="1">9,966</td><td class="ac" data-target="1000000" data-rowi="1">1,000,000</td></tr>
+              <tr data-row><td>10,000</td><td data-target="10000" data-rowi="2">10,000</td><td data-target="132877" data-rowi="2">132,877</td><td class="ac" data-target="100000000" data-rowi="2">100,000,000</td></tr>
+              <tr data-row><td>1,000,000</td><td data-target="1000000" data-rowi="3">1,000,000</td><td data-target="19931569" data-rowi="3">19,931,569</td><td class="ac" data-target="1000000000000" data-rowi="3">1,000,000,000,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="replay-row">
+          <button class="btn-outline" id="sn-replay">↻ Replay reveal</button>
+          <span class="replay-note">rows land · then numbers count · easeOutCubic</span>
+        </div>
+      </div>
+
+      <!-- D — Real world -->
+      <div class="reading-section">
+        <p class="sub-label">D — In the real world</p>
+        <h3 class="reading-heading">Where linear flow fields earn their keep</h3>
+        <div class="rw-grid">
+          <div class="rw-item">
+            <span class="rw-label">VFX &amp; games</span>
+            <span class="rw-text">Smoke, fire and magic in real-time engines are millions of particles advected through exactly this kind of field — cheap because the cost stays linear, expensive if you needed exact inter-particle forces.</span>
+          </div>
+          <div class="rw-item">
+            <span class="rw-label">Meteorology</span>
+            <span class="rw-text">Wind-map visualisations trace tracer particles over forecast velocity grids — the same advect-and-reseed loop, scaled to the globe. ECMWF runs particle ensembles over 137 vertical atmospheric levels.</span>
+          </div>
+          <div class="rw-item">
+            <span class="rw-label">Medical imaging</span>
+            <span class="rw-text">Diffusion-tensor tractography follows particles along neural fibre directions to reconstruct white-matter pathways in the brain — critical for surgical planning around tumours.</span>
+          </div>
+        </div>
+        <div class="rw-question"><em>Your simulation runs a few thousand particles at 60 fps in a browser. A weather model runs billions on a supercomputer. The loop is identical — so what, exactly, did the supercomputer buy?</em></div>
+      </div>
+
+    </div><!-- /reading-col -->
+  </div><!-- /painting-body -->
+</section>
+
+<!-- ================================================================ GREAT WAVE -->
+<section id="great-wave" class="painting-section gw-section">
+  <div class="painting-header">
+    <div class="painting-counter-line">
+      <span class="painting-counter">02 / III paintings</span>
+      <span class="painting-artist">Hokusai · c.1831</span>
+    </div>
+    <h2 class="painting-title">The Great Wave</h2>
+  </div>
+
+  <div class="painting-body">
+    <aside class="sim-panel">
+      <p class="sub-label">A — The simulation</p>
+      <div class="sim-canvas-wrap">
+        <canvas id="gw-canvas" class="sim-canvas" aria-label="2D wave equation simulation"></canvas>
+        <div class="sim-canvas-lbl">2D wave equation · click to add wave source</div>
+      </div>
+      <!-- wave speed -->
+      <div class="slider-row">
+        <div class="slider-lbl-row">
+          <span class="slider-name">Wave speed <em>c</em></span>
+          <span class="slider-val" id="gw-speed-val">0.30</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="gw-speed-fill"></div><div class="slider-thumb" id="gw-speed-thumb"></div></div>
+          <input type="range" class="slider-input" id="gw-speed" min="1" max="9" value="5" step="1">
+        </div>
+      </div>
+      <!-- damping -->
+      <div class="slider-row">
+        <div class="slider-lbl-row">
+          <span class="slider-name">Damping</span>
+          <span class="slider-val" id="gw-damp-val">0.994</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="gw-damp-fill"></div><div class="slider-thumb" id="gw-damp-thumb"></div></div>
+          <input type="range" class="slider-input" id="gw-damp" min="1" max="9" value="7" step="1">
+        </div>
+      </div>
+      <!-- amplitude -->
+      <div class="slider-row">
+        <div class="slider-lbl-row">
+          <span class="slider-name">Source amplitude</span>
+          <span class="slider-val" id="gw-amp-val">2.0</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="gw-amp-fill"></div><div class="slider-thumb" id="gw-amp-thumb"></div></div>
+          <input type="range" class="slider-input" id="gw-amp" min="1" max="9" value="5" step="1">
+        </div>
+      </div>
+      <div class="sim-btns">
+        <button class="btn-primary" id="gw-run">Run</button>
+        <button class="btn-outline" id="gw-reset">↺ Reset</button>
+        <span class="sim-hint">click to add source</span>
+      </div>
+    </aside>
+
+    <div class="reading-col">
+
+      <!-- B — Algorithm -->
+      <div class="reading-section">
+        <p class="sub-label">B — The algorithm</p>
+        <h3 class="reading-heading">A grid of heights evolving under the wave equation</h3>
+        <p class="reading-body">Hokusai's wave captures the moment before a crest breaks. We don't reproduce the physics of a breaking wave — that's far harder than it looks. Instead we simulate the <em>wave equation</em>: the rule that governs how a disturbance travels through a medium at a fixed speed <em>c</em>. It's the same equation behind sound in air, light in a vacuum, and the vibration of a drum skin. It is not the equation that governs real water — more on that below — but it produces the travelling, interfering ripples that give the piece its motion.</p>
+        <p class="reading-body">Each point on the grid stores a height. Its next height depends on its current height, its height one step ago, and the heights of its four nearest neighbours. There's no matrix to invert and no global system to solve: every cell updates from local information alone. The wave emerges from the aggregate of these local interactions.</p>
+        <div class="eq-block">
+          <p class="eq-display">∂²<em>η</em>/∂<em>t</em>² &nbsp;=&nbsp; <em>c</em>²∇²<em>η</em></p>
+          <p class="eq-caption">Eq. 1 — 2D wave equation (height η, speed c)</p>
+        </div>
+        <div class="eq-block">
+          <p class="eq-display"><em>η</em><sub>t+1</sub> &nbsp;=&nbsp; 2<em>η</em><sub>t</sub> − <em>η</em><sub>t−1</sub> &nbsp;+&nbsp; (<em>c</em>²Δ<em>t</em>² / Δ<em>x</em>²) ∇²<em>η</em><sub>t</sub></p>
+          <p class="eq-caption">Eq. 2 — explicit finite-difference update</p>
+        </div>
+        <p class="reading-body">∇²<em>η</em><sub>t</sub> is the discrete Laplacian: the sum of the four neighbours minus four times the centre cell.</p>
+        <div class="code-block"><pre><span class="cc"># one time step — O(n), n = grid cells</span>
+<span class="cc"># Note: we work in grid units, so dx = 1 and the dx**2 term from the</span>
+<span class="cc"># textbook equation disappears here. c is therefore in cells-per-step,</span>
+<span class="cc"># not metres-per-second.</span>
+<span class="ck">for</span> y <span class="ck">in</span> range(1, H-1):
+    <span class="ck">for</span> x <span class="ck">in</span> range(1, W-1):
+        lap = (h[y,x-1] + h[y,x+1]
+             + h[y-1,x] + h[y+1,x] - 4*h[y,x])
+        h_next[y,x] = (2*h[y,x] - h_prev[y,x]
+                     + c**2 * lap) * damping
+h_prev, h, h_next = h, h_next, h_prev</pre></div>
+      </div>
+
+      <!-- C — Complexity -->
+      <div class="reading-section">
+        <p class="sub-label">C — The complexity</p>
+        <h3 class="reading-heading">Linear in space — but you can't take any timestep you like</h3>
+        <p class="reading-body">The update rule above is <span class="mono-inline">O(n)</span> per time step, where <em>n</em> is the number of grid cells. Each cell reads its four neighbours and applies a fixed formula, so doubling the grid doubles the work. No surprises in the <em>space</em> cost.</p>
+        <p class="reading-body">The interesting cost is hidden in <em>time</em>. This is an explicit solver: it computes the next state purely from states it already has. Explicit solvers are cheap per step, but they are not free — they are only stable if the timestep is small enough. Push the wave speed <em>c</em> or the timestep Δ<em>t</em> too high and the simulation doesn't just get inaccurate, it detonates: heights race off to infinity within a few frames.</p>
+        <p class="reading-body">The boundary is the <em>Courant–Friedrichs–Lewy condition</em>. For the 2D wave equation it is:</p>
+        <div class="eq-block">
+          <p class="eq-display"><em>c</em> · Δ<em>t</em> / Δ<em>x</em> &nbsp;≤&nbsp; 1/√2</p>
+          <p class="eq-caption">Courant–Friedrichs–Lewy condition · 2D wave equation</p>
+        </div>
+        <p class="reading-body">Intuitively: information in the real wave travels at speed <em>c</em>. In one timestep it should not cross more than one grid cell. If your scheme lets a disturbance jump further per step than the physics allows, the solver loses track of cause and effect, and the errors compound geometrically. The 1/√2 is the two-dimensional correction — a disturbance can travel diagonally, and the diagonal is longer than the side.</p>
+        <p class="reading-body">You can feel this trade-off directly. Halving Δ<em>x</em> for a sharper wave forces you to at least halve Δ<em>t</em> to stay stable, which means twice as many steps to cover the same span of time. Finer space costs you more in time than the <span class="mono-inline">O(n)</span> grid count alone suggests.</p>
+        <div class="ctable-wrap">
+          <table class="ctable" id="gw-table" aria-label="Space-versus-time cost under the Courant condition">
+            <thead><tr>
+              <th>grid resolution</th>
+              <th>cells n (O(n) space)</th>
+              <th>max stable Δt</th>
+              <th class="ac">steps for 1 sim-second</th>
+            </tr></thead>
+            <tbody>
+              <tr data-row><td>100 × 100</td><td data-target="10000" data-rowi="0">10,000</td><td>Δt<sub>0</sub></td><td class="ac">T</td></tr>
+              <tr data-row><td>200 × 200</td><td data-target="40000" data-rowi="1">40,000</td><td>Δt<sub>0</sub> / 2</td><td class="ac">2T</td></tr>
+              <tr data-row><td>400 × 400</td><td data-target="160000" data-rowi="2">160,000</td><td>Δt<sub>0</sub> / 4</td><td class="ac">4T</td></tr>
+              <tr data-row><td>800 × 800</td><td data-target="640000" data-rowi="3">640,000</td><td>Δt<sub>0</sub> / 8</td><td class="ac">8T</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="reading-body">Doubling the linear resolution multiplies the cell count by 4 and forces the timestep down by 2. The total work to simulate a fixed duration therefore scales as roughly the <em>cube</em> of the linear resolution, not the square. The Courant condition is why high-resolution wave and seismic models are so expensive: the cost is in the timesteps as much as the cells.</p>
+        <div class="replay-row">
+          <button class="btn-outline" id="gw-replay">↻ Replay reveal</button>
+          <span class="replay-note">rows land · then numbers count</span>
+        </div>
+
+        <div class="millennium">
+          <p class="millennium-label">Aside · digression</p>
+          <p class="millennium-title">Why not simulate real water?</p>
+          <p class="millennium-body">Real water is governed by the Navier–Stokes equations: non-linear, fully coupled, and genuinely unsolved — whether smooth 3D solutions always exist is one of the Clay Mathematics Institute's seven Millennium Prize Problems, worth $1,000,000 and open since 2000. The wave equation we used here is not a simplified Navier–Stokes; it's a different equation entirely, linear where Navier–Stokes is non-linear. We didn't approximate the hard problem — we sidestepped it by solving an easier one that happens to look convincing. Most real-time water you've seen in games does the same.</p>
+        </div>
+      </div>
+
+      <!-- D — Real world -->
+      <div class="reading-section">
+        <p class="sub-label">D — In the real world</p>
+        <h3 class="reading-heading">Where wave equations earn their keep</h3>
+        <div class="rw-grid">
+          <div class="rw-item">
+            <span class="rw-label">Tsunami prediction</span>
+            <span class="rw-text">NOAA's DART buoy network detects pressure changes on the deep-ocean floor; propagation models then project arrival times and wave heights. Those models use the shallow-water equations — a relative of the wave equation that shares its travelling-disturbance behaviour but adds terms the linear version omits. The 2004 Indian Ocean tsunami exposed how few such systems existed at the time and drove their expansion across the Pacific and Indian Oceans.</span>
+          </div>
+          <div class="rw-item">
+            <span class="rw-label">Aeroacoustics</span>
+            <span class="rw-text">Aircraft noise regulations require predicting how sound waves — governed by the wave equation — propagate from engines. The O(n) scaling per step makes full-aircraft simulation tractable on modern supercomputers. Engine placement on modern aircraft is partly an acoustic optimisation problem.</span>
+          </div>
+          <div class="rw-item">
+            <span class="rw-label">Seismology</span>
+            <span class="rw-text">Earthquake ground motion is modelled by wave equations across 3D geological grids covering continents, with tens of billions of cells. The finite-difference scheme is the same; the engineering is in stable boundary conditions and parallelising across thousands of CPUs.</span>
+          </div>
+        </div>
+        <div class="rw-question"><em>Your simulation is 2D, linear, and never lets a wave break. A real ocean wave is none of those things. Of the three — adding a third dimension, adding non-linearity, or allowing the wave to break — which do you think costs the most to simulate, and which matters most for predicting where a tsunami makes landfall? They might not be the same answer.</em></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ THE SCREAM -->
+<section id="the-scream" class="painting-section ts-section">
+  <div class="painting-header">
+    <div class="painting-counter-line">
+      <span class="painting-counter">03 / III paintings</span>
+      <span class="painting-artist">Munch · 1893</span>
+    </div>
+    <h2 class="painting-title">The Scream</h2>
+  </div>
+
+  <div class="painting-body">
+    <aside class="sim-panel">
+      <p class="sub-label">A — The simulation</p>
+      <div class="sim-canvas-wrap">
+        <canvas id="ts-canvas" class="sim-canvas" aria-label="Gray-Scott reaction-diffusion simulation"></canvas>
+        <div class="sim-canvas-lbl">Gray-Scott reaction–diffusion · click to seed</div>
+      </div>
+      <!-- feed -->
+      <div class="slider-row">
+        <div class="slider-lbl-row">
+          <span class="slider-name">Feed rate <em>F</em></span>
+          <span class="slider-val" id="ts-feed-val">0.0340</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="ts-feed-fill"></div><div class="slider-thumb" id="ts-feed-thumb"></div></div>
+          <input type="range" class="slider-input" id="ts-feed" min="1" max="9" value="5" step="1">
+        </div>
+      </div>
+      <!-- kill -->
+      <div class="slider-row">
+        <div class="slider-lbl-row">
+          <span class="slider-name">Kill rate <em>k</em></span>
+          <span class="slider-val" id="ts-kill-val">0.0640</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="ts-kill-fill"></div><div class="slider-thumb" id="ts-kill-thumb"></div></div>
+          <input type="range" class="slider-input" id="ts-kill" min="1" max="9" value="5" step="1">
+        </div>
+      </div>
+      <!-- diffusion ratio -->
+      <div class="slider-row">
+        <div class="slider-lbl-row">
+          <span class="slider-name">Diffusion ratio <em>D<sub>u</sub>/D<sub>v</sub></em></span>
+          <span class="slider-val" id="ts-diff-val">2.0×</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-track"><div class="slider-fill" id="ts-diff-fill"></div><div class="slider-thumb" id="ts-diff-thumb"></div></div>
+          <input type="range" class="slider-input" id="ts-diff" min="1" max="9" value="5" step="1">
+        </div>
+      </div>
+      <div class="sim-btns">
+        <button class="btn-primary" id="ts-run">Run</button>
+        <button class="btn-outline" id="ts-reset">↺ Reset</button>
+        <span class="sim-hint">click to seed</span>
+      </div>
+    </aside>
+
+    <div class="reading-col">
+
+      <!-- B — Algorithm -->
+      <div class="reading-section">
+        <p class="sub-label">B — The algorithm</p>
+        <h3 class="reading-heading">Two chemicals, one unstable equilibrium, and Turing patterns</h3>
+        <p class="reading-body">In 1952, Alan Turing — better known for his work on computation and codebreaking — published a paper arguing that certain chemical systems could spontaneously produce spatial patterns from a nearly uniform initial state. The turbulent sky of <em>The Scream</em>, with its swirling organisation, has something of this quality: a system driven from equilibrium, trying to arrange itself.</p>
+        <p class="reading-body">The Gray-Scott model captures the essence with two interacting chemicals <em>U</em> and <em>V</em>. <em>U</em> is fed in from outside at rate <em>F</em>. When <em>U</em> and <em>V</em> meet, they produce more <em>V</em> (autocatalytic reaction). <em>V</em> also decays at rate <em>k</em>. Crucially, the two diffuse at different rates — <em>U</em> fast, <em>V</em> slow. This asymmetry is the mechanism: <em>V</em> concentrates where it forms, while <em>U</em> replenishes the gaps, producing self-sustaining spatial structure. The <em>F</em> and <em>k</em> here are the same feed rate and kill rate you set with the sliders in panel A.</p>
+        <div class="eq-block">
+          <p class="eq-display">∂<em>u</em>/∂<em>t</em> = <em>D<sub>u</sub></em>∇²<em>u</em> − <em>uv</em>² + <em>F</em>(1−<em>u</em>)</p>
+          <p class="eq-display">∂<em>v</em>/∂<em>t</em> = <em>D<sub>v</sub></em>∇²<em>v</em> + <em>uv</em>² − (<em>F</em>+<em>k</em>)<em>v</em></p>
+          <p class="eq-caption">Eq. 1 — Gray-Scott reaction–diffusion model</p>
+        </div>
+        <div class="code-block"><pre><span class="cc"># one Gray-Scott step — O(n), n = grid cells</span>
+<span class="ck">for</span> y <span class="ck">in</span> range(H):
+    <span class="ck">for</span> x <span class="ck">in</span> range(W):
+        lu = laplacian(u, x, y)   <span class="cc"># 4-neighbour sum</span>
+        lv = laplacian(v, x, y)
+        uvv = u[y,x] * v[y,x]**2  <span class="cc"># autocatalytic term</span>
+        u_next[y,x] = u[y,x] + Du*lu - uvv + F*(1 - u[y,x])
+        v_next[y,x] = v[y,x] + Dv*lv + uvv - (F+k)*v[y,x]
+u, v = u_next, v_next</pre></div>
+      </div>
+
+      <!-- C — Complexity -->
+      <div class="reading-section">
+        <p class="sub-label">C — The complexity</p>
+        <h3 class="reading-heading">Linear per step — but the step count is the real cost, and it's hard to bound</h3>
+        <p class="reading-body">Like the others, the update is <span class="mono-inline">O(n)</span> per step: each cell reads its four neighbours and applies a fixed formula. The space cost holds no surprises. The cost that matters here is the <em>number of steps</em> — and that's where Gray-Scott gets genuinely awkward.</p>
+        <p class="reading-body">The system has a transient phase: a stretch of apparent disorder before a coherent pattern settles. For most parameter choices that transient is finite but its length varies enormously, and there's no simple formula that takes (<em>F</em>, <em>k</em>) and the initial conditions and returns "it will settle after this many steps." In practice you find out by running it. For some parameter regimes the system never settles at all — it stays in perpetual motion, spots endlessly splitting and dying.</p>
+        <p class="reading-body">This isn't just a Gray-Scott quirk. Reaction–diffusion systems in general are computationally powerful: researchers have shown that suitably configured reaction–diffusion media can perform computation — building logic gates and, in principle, universal computers out of travelling chemical waves. The moment a system can simulate a general computer, asking "will this configuration ever reach a stable state?" becomes a version of the <em>halting problem</em>: in the general case, undecidable. There is no algorithm that takes any program and tells you whether it eventually stops; for a sufficiently expressive reaction–diffusion system, the same wall applies to "will this pattern ever settle?"</p>
+        <p class="reading-body">That's the honest shape of the complexity story here. The per-step arithmetic is trivial. The hard part — how long, or whether ever — is not something you can shortcut by being clever, and at the extreme it's not something any algorithm can answer in general.</p>
+        <div class="ctable-wrap">
+          <table class="ctable" id="ts-table" aria-label="Where the cost lives in a reaction-diffusion simulation">
+            <thead><tr>
+              <th>what you're measuring</th>
+              <th>cost</th>
+              <th class="ac">can you predict it in advance?</th>
+            </tr></thead>
+            <tbody>
+              <tr data-row><td>one update step</td><td>O(n), n = grid cells</td><td class="ac">yes — fixed work per cell</td></tr>
+              <tr data-row><td>steps until pattern settles</td><td>varies wildly with (F, k)</td><td class="ac">no general formula; run it to find out</td></tr>
+              <tr data-row><td>whether it settles at all</td><td>—</td><td class="ac">undecidable in the general case for computationally universal reaction–diffusion systems</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="reading-body">The same <span class="mono-inline">O(n)</span> per-step cost as the other two paintings — but here the open question isn't "how big is n," it's "how many steps, and will it ever stop?" That second question is, in full generality, beyond what any algorithm can answer.</p>
+        <div class="replay-row">
+          <button class="btn-outline" id="ts-replay">↻ Replay reveal</button>
+          <span class="replay-note">rows reveal · easeOutCubic</span>
+        </div>
+      </div>
+
+      <!-- D — Real world -->
+      <div class="reading-section">
+        <p class="sub-label">D — In the real world</p>
+        <h3 class="reading-heading">Where reaction–diffusion shows up, uninvited</h3>
+        <div class="rw-grid">
+          <div class="rw-item">
+            <span class="rw-label">Animal markings</span>
+            <span class="rw-text">Turing's 1952 paper predicted the mathematical existence of stripes and spots before biologists had evidence for the mechanism. In 2012, researchers confirmed that the chemical signals governing mouse digit formation follow a Turing-type reaction-diffusion process — 60 years after the prediction.</span>
+          </div>
+          <div class="rw-item">
+            <span class="rw-label">Cardiac arrhythmia</span>
+            <span class="rw-text">Spiral waves in the cardiac muscle — rotating patterns of electrical excitation — are a form of reaction-diffusion instability. They underlie ventricular fibrillation. The FitzHugh-Nagumo model used in cardiology is structurally similar to Gray-Scott, sharing the same autocatalytic mechanism.</span>
+          </div>
+          <div class="rw-item">
+            <span class="rw-label">Materials science</span>
+            <span class="rw-text">Regular nanostructures in certain chemical vapour deposition processes form by reaction-diffusion dynamics. Engineers exploit this to produce self-assembling surface patterns at scales too small for conventional lithography, without directing each feature individually.</span>
+          </div>
+        </div>
+        <div class="rw-question"><em>The patterns depend sensitively on <em>F</em> and <em>k</em>. What experiment could you design to test whether a real biological pattern — say, an angelfish's stripes — is genuinely produced by a Turing mechanism, and not by a developmental clock or some other process?</em></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ DOWNLOADS -->
+<section id="downloads">
+  <div class="dl-header">
+    <p class="dl-kicker">Downloads</p>
+    <h2 class="dl-title">Run it on your own machine</h2>
+  </div>
+  <div class="dl-body">
+    <div>
+      <div class="dl-row dl-sn">
+        <span class="dl-name">starry_night.py</span>
+        <span class="dl-meta">~80 lines · numpy · matplotlib</span>
+        <a class="dl-btn" href="starry_night.py" download>↓ Download</a>
+      </div>
+      <div class="dl-row dl-gw">
+        <span class="dl-name">great_wave.py</span>
+        <span class="dl-meta">~90 lines · numpy · matplotlib</span>
+        <a class="dl-btn" href="great_wave.py" download>↓ Download</a>
+      </div>
+      <div class="dl-row dl-ts">
+        <span class="dl-name">the_scream.py</span>
+        <span class="dl-meta">~100 lines · numpy · matplotlib</span>
+        <a class="dl-btn" href="the_scream.py" download>↓ Download</a>
+      </div>
+      <p class="mobile-dl-note">Open on a desktop to download and run the scripts.</p>
+
+      <div class="setup-block">
+<pre><span class="cc"># one-time setup</span>
+pip install numpy matplotlib
+
+<span class="cc"># run any script</span>
+python starry_night.py
+python great_wave.py
+python the_scream.py</pre>
+      </div>
+
+      <div class="challenge-section">
+        <p class="ch-section-hdr">Challenge progression · four tiers per painting</p>
+
+        <div class="ch-painting ch-sn">
+          <p class="ch-painting-name" style="color:#f5c518">The Starry Night</p>
+          <div class="ch-tier"><span class="ch-tier-lbl">01 OBSERVE</span><span class="ch-tier-txt">Run it. Change one parameter. Predict what the output will look like before you press enter.</span></div>
+          <div class="ch-tier"><span class="ch-tier-lbl">02 EXTEND</span><span class="ch-tier-txt">Add a second noise octave to the field. Measure whether the cost per frame is still O(n) — time it for n = 1000 and n = 10000.</span></div>
+          <div class="ch-tier"><span class="ch-tier-lbl">03 REBUILD</span><span class="ch-tier-txt">Replace the synthetic noise field with one sampled from a real wind dataset. ECMWF provides forecast data free via CDS API.</span></div>
+          <div class="ch-tier"><span class="ch-tier-lbl">04 INVESTIGATE</span><span class="ch-tier-txt">Make particles interact — each pushes its neighbours slightly. Watch O(n) become O(n²). Find the n at which your machine drops below 10 fps.</span></div>
+        </div>
+
+        <div class="ch-painting ch-gw">
+          <p class="ch-painting-name" style="color:#5a93d4">The Great Wave</p>
+          <div class="ch-tier"><span class="ch-tier-lbl">01 OBSERVE</span><span class="ch-tier-txt">Run it. Add a wave source by clicking. Watch how two sources interfere — where do you see constructive vs destructive interference?</span></div>
+          <div class="ch-tier"><span class="ch-tier-lbl">02 EXTEND</span><span class="ch-tier-txt">Implement a reflective wall along one edge. How does changing the angle of incidence affect the reflected wave?</span></div>
+          <div class="ch-tier"><span class="ch-tier-lbl">03 REBUILD</span><span class="ch-tier-txt">Find the Courant limit experimentally: increase c until the simulation produces numerical artefacts, then prove the stability condition c·Δt/Δx ≤ 1/√2.</span></div>
+          <div class="ch-tier"><span class="ch-tier-lbl">04 INVESTIGATE</span><span class="ch-tier-txt">The wave equation is linear — waves pass through each other unchanged. Add a non-linear term (η³ dispersion). What new phenomena appear?</span></div>
+        </div>
+
+        <div class="ch-painting ch-ts">
+          <p class="ch-painting-name" style="color:#e9612f">The Scream</p>
+          <div class="ch-tier"><span class="ch-tier-lbl">01 OBSERVE</span><span class="ch-tier-txt">Run it. Change F or k by 0.002. Does the resulting pattern change gradually or appear all at once? Record the parameter pairs that produce stripes vs spots vs nothing.</span></div>
+          <div class="ch-tier"><span class="ch-tier-lbl">02 EXTEND</span><span class="ch-tier-txt">Map the (F, k) parameter space: run a grid of 10×10 combinations and save a thumbnail for each. Which region of the space corresponds to which pattern type?</span></div>
+          <div class="ch-tier"><span class="ch-tier-lbl">03 REBUILD</span><span class="ch-tier-txt">Implement the FitzHugh-Nagumo model — a related two-variable reaction-diffusion system used in cardiac modelling. Do Turing patterns emerge with the standard cardiac parameters?</span></div>
+          <div class="ch-tier"><span class="ch-tier-lbl">04 INVESTIGATE</span><span class="ch-tier-txt">Can you find (F, k) values where the system never reaches a stable pattern? Provide either a proof or a practical test for detecting non-convergence.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- side note -->
+    <div>
+      <div style="border:1px solid var(--border);background:#0d0d14;padding:24px">
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#5e5e6a;margin-bottom:14px">About the scripts</p>
+        <p style="font-size:15px;line-height:1.6;color:#c7c7d2;margin-bottom:16px">Each script is a self-contained implementation of the algorithm from the browser page, written for readability not performance. The code matches the pseudocode in section B — you should recognise every line.</p>
+        <p style="font-size:15px;line-height:1.6;color:#c7c7d2;margin-bottom:16px">matplotlib's <code style="font-family:'IBM Plex Mono',monospace;font-size:.9em;color:#93939f">FuncAnimation</code> handles the update loop. The simulation logic is separate from the display — you can swap in a different renderer without touching the physics.</p>
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6f6f7b">Requires Python 3.9+ · numpy ≥ 1.22 · matplotlib ≥ 3.5</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-dots">
+    <div class="fdot" style="background:#f5c518"></div>
+    <div class="fdot" style="background:#5a93d4"></div>
+    <div class="fdot" style="background:#e9612f"></div>
+  </div>
+  <span class="footer-text">Deep Patterns · KCS Computer Science</span>
+  <span class="footer-spacer"></span>
+  <span class="footer-right">Summer 2026 · D. Haxton</span>
+</footer>
+
+<script>
+'use strict';
+
+// ================================================================
+// NAV TRACKING
+// ================================================================
+(function initNav() {
+  const links = Array.from(document.querySelectorAll('#main-nav .nav-link'));
+  const ACCENTS = {
+    'landing': null,
+    'starry-night': '#f5c518',
+    'great-wave': '#5a93d4',
+    'the-scream': '#e9612f',
+    'downloads': null
+  };
+
+  function setActive(id) {
+    links.forEach(l => {
+      const active = l.dataset.section === id;
+      const accent = ACCENTS[id];
+      l.style.color = active ? (accent || '#e9e9f0') : '';
+      l.style.borderBottomColor = active && accent ? accent : 'transparent';
+    });
+  }
+
+  const sections = ['landing','starry-night','great-wave','the-scream','downloads']
+    .map(id => document.getElementById(id)).filter(Boolean);
+
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const mid = window.scrollY + window.innerHeight * 0.45;
+      let active = sections[0].id;
+      for (const s of sections) {
+        if (s.getBoundingClientRect().top + window.scrollY <= mid) active = s.id;
+      }
+      setActive(active);
+      ticking = false;
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+// ================================================================
+// SLIDER HELPER
+// ================================================================
+function initSlider(cfg) {
+  const { id, fillId, thumbId, valId, format, onChange } = cfg;
+  const input = document.getElementById(id);
+  const fill  = document.getElementById(fillId);
+  const thumb = document.getElementById(thumbId);
+  const valEl = document.getElementById(valId);
+  if (!input || !fill || !thumb) return;
+
+  function update() {
+    const pct = ((input.value - input.min) / (input.max - input.min)) * 100;
+    fill.style.width  = pct + '%';
+    thumb.style.left  = pct + '%';
+    if (valEl) valEl.textContent = format ? format(+input.value) : String(+input.value);
+    if (onChange) onChange(+input.value);
+  }
+
+  input.addEventListener('input', update);
+  update();
+}
+
+// ================================================================
+// COMPLEXITY TABLE REVEAL
+// ================================================================
+class RevealTable {
+  constructor(tableId, replayId) {
+    this.table = document.getElementById(tableId);
+    if (!this.table) return;
+    this.rows  = Array.from(this.table.querySelectorAll('[data-row]'));
+    this.cells = Array.from(this.table.querySelectorAll('[data-target]'));
+    this.raf   = null;
+
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    if (reduce) { this.paintFinal(); return; }
+
+    this.rows.forEach(r  => { r.style.opacity = '0'; r.style.transform = 'translateY(12px)'; });
+    this.cells.forEach(c => { c.textContent = '0'; });
+
+    this.io = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) { this.runReveal(); this.io.disconnect(); }
+    }, { threshold: 0.4 });
+    this.io.observe(this.table);
+
+    const btn = document.getElementById(replayId);
+    if (btn) btn.addEventListener('click', () => this.runReveal());
+  }
+
+  fmt(n) { return Math.round(n).toLocaleString('en-GB'); }
+
+  paintFinal() {
+    this.rows.forEach(r  => { r.style.opacity = '1'; r.style.transform = 'none'; });
+    this.cells.forEach(c => { c.textContent = this.fmt(+c.dataset.target); });
+  }
+
+  runReveal() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    const dur = 1700, stagger = 0.10, win = 0.42;
+    const ease = p => 1 - Math.pow(1 - p, 3);
+    const t0 = performance.now();
+
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / dur);
+      this.rows.forEach((r, i) => {
+        const lp = Math.max(0, Math.min(1, (p - i * stagger) / win));
+        const e  = ease(lp);
+        r.style.opacity   = String(e);
+        r.style.transform = `translateY(${((1 - e) * 12).toFixed(2)}px)`;
+      });
+      this.cells.forEach(c => {
+        const i  = +(c.dataset.rowi || 0);
+        const lp = Math.max(0, Math.min(1, (p - i * stagger) / win));
+        const e  = ease(lp);
+        c.textContent = this.fmt((+c.dataset.target) * e);
+      });
+      if (p < 1) this.raf = requestAnimationFrame(tick);
+      else this.paintFinal();
+    };
+    this.raf = requestAnimationFrame(tick);
+  }
+}
+
+// ================================================================
+// STARRY NIGHT — curl-noise flow field
+// ================================================================
+class StarryNightSim {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    this.ctx     = this.canvas.getContext('2d');
+    this.running = false;
+    this.raf     = null;
+    this.t       = 0;
+    this.mx      = -1; this.my = -1;
+
+    this.nParticles = 3000;
+    this.scaleIdx   = 4;   // 1-9 maps to field scale
+    this.speedIdx   = 5;   // 1-9 maps to speed
+    this.particles  = [];
+
+    this.resize();
+    this.setupPauseObserver();
+    this.setupInteraction();
+  }
+
+  fieldScaleFromIdx(i) { return 0.001 + (i - 1) * 0.001; }
+  speedFromIdx(i)      { return 0.3 + (i - 1) * 0.2; }
+
+  resize() {
+    const rect = this.canvas.parentElement.getBoundingClientRect();
+    const w = Math.max(rect.width, 200);
+    const h = this.canvas.offsetHeight || 280;
+    const dpr = Math.min(devicePixelRatio, 2);
+    this.canvas.width  = w * dpr;
+    this.canvas.height = h * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.w = w; this.h = h;
+    this.seedParticles();
+  }
+
+  seedParticles() {
+    this.particles = Array.from({ length: this.nParticles }, () => ({
+      x: Math.random() * this.w,
+      y: Math.random() * this.h,
+      age: Math.floor(Math.random() * 80),
+      life: 50 + Math.random() * 80
+    }));
+  }
+
+  psi(x, y) {
+    const z = this.fieldScaleFromIdx(this.scaleIdx);
+    const T = this.t * 0.0005;
+    return Math.sin(x * z * 1.8 + T) * Math.cos(y * z * 2.2 + T * 0.7)
+         + Math.sin(x * z * 2.6 - T * 0.5) * Math.cos(y * z * 2.0 + T * 0.8)
+         + Math.sin((x + y) * z * 1.5 + T * 0.6) * 0.5;
+  }
+
+  curl(x, y) {
+    const eps = 2;
+    const dpdy = (this.psi(x, y + eps) - this.psi(x, y - eps)) / (2 * eps);
+    const dpdx = (this.psi(x + eps, y) - this.psi(x - eps, y)) / (2 * eps);
+    return { vx: dpdy * 55, vy: -dpdx * 55 };
+  }
+
+  frame() {
+    const { w, h, ctx } = this;
+    ctx.fillStyle = 'rgba(8,8,16,0.040)';
+    ctx.fillRect(0, 0, w, h);
+
+    const spd = this.speedFromIdx(this.speedIdx);
+
+    for (const p of this.particles) {
+      let { vx, vy } = this.curl(p.x, p.y);
+
+      if (this.mx >= 0) {
+        const dx = this.mx - p.x, dy = this.my - p.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < 50000) {
+          const s = 60 / (d2 + 100);
+          vx += dx * s; vy += dy * s;
+        }
+      }
+
+      const nx = p.x + vx * spd * 1.1;
+      const ny = p.y + vy * spd * 1.1;
+      const al = 0.28 + 0.62 * Math.sin((p.age / p.life) * Math.PI);
+
+      ctx.strokeStyle = `rgba(252,214,82,${al.toFixed(3)})`;
+      ctx.lineWidth   = 1.0 + Math.random() * 1.1;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(nx, ny);
+      ctx.stroke();
+
+      p.x = nx; p.y = ny; p.age++;
+      if (p.x < -5 || p.x > w + 5 || p.y < -5 || p.y > h + 5 || p.age > p.life) {
+        p.x = Math.random() * w; p.y = Math.random() * h;
+        p.age = 0; p.life = 50 + Math.random() * 80;
+      }
+    }
+    this.t++;
+  }
+
+  setupInteraction() {
+    const c = this.canvas;
+    const upd = (cx, cy) => {
+      const r = c.getBoundingClientRect();
+      this.mx = cx - r.left; this.my = cy - r.top;
+    };
+    const clr = () => { this.mx = -1; this.my = -1; };
+    c.addEventListener('mousemove', e => upd(e.clientX, e.clientY));
+    c.addEventListener('mouseleave', clr);
+    c.addEventListener('touchmove', e => { e.preventDefault(); upd(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+    c.addEventListener('touchend', clr);
+  }
+
+  setupPauseObserver() {
+    this.pauseIO = new IntersectionObserver(entries => {
+      entries[0].isIntersecting ? this.start() : this.stop();
+    }, { threshold: 0 });
+    this.pauseIO.observe(this.canvas);
+  }
+
+  start() {
+    if (this.running) return;
+    this.running = true;
+    const loop = () => { if (!this.running) return; this.frame(); this.raf = requestAnimationFrame(loop); };
+    this.raf = requestAnimationFrame(loop);
+  }
+
+  stop() {
+    this.running = false;
+    if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+  }
+
+  reset() {
+    this.stop();
+    this.t = 0;
+    this.ctx.clearRect(0, 0, this.w, this.h);
+    this.seedParticles();
+    this.start();
+  }
+
+  setN(n) {
+    this.nParticles = n;
+    while (this.particles.length < n)
+      this.particles.push({ x: Math.random() * this.w, y: Math.random() * this.h, age: 0, life: 50 + Math.random() * 80 });
+    if (this.particles.length > n) this.particles.length = n;
+  }
+}
+
+// ================================================================
+// GREAT WAVE — 2D wave equation
+// ================================================================
+class GreatWaveSim {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    this.ctx     = this.canvas.getContext('2d');
+    this.running = false;
+    this.raf     = null;
+
+    this.GW = 180; this.GH = 100; // grid dimensions
+    this.speedIdx = 5;
+    this.dampIdx  = 7;
+    this.ampIdx   = 5;
+
+    this.resize();
+    this.initGrid();
+    this.addInitialWaves();
+    this.setupInteraction();
+    this.setupPauseObserver();
+  }
+
+  cFromIdx(i)    { return 0.10 + (i - 1) * 0.045; }
+  dampFromIdx(i) { return 0.988 + (i - 1) * 0.0015; }
+  ampFromIdx(i)  { return 0.5 + (i - 1) * 0.4; }
+
+  resize() {
+    const rect = this.canvas.parentElement.getBoundingClientRect();
+    const w = Math.max(rect.width, 200);
+    const h = this.canvas.offsetHeight || 280;
+    const dpr = Math.min(devicePixelRatio, 2);
+    this.canvas.width  = w * dpr;
+    this.canvas.height = h * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.w = w; this.h = h;
+    this.offscreen = document.createElement('canvas');
+    this.offscreen.width  = this.GW;
+    this.offscreen.height = this.GH;
+    this.offCtx = this.offscreen.getContext('2d');
+    this.imgData = new ImageData(this.GW, this.GH);
+  }
+
+  initGrid() {
+    const n = this.GW * this.GH;
+    this.cur  = new Float32Array(n);
+    this.prev = new Float32Array(n);
+    this.next = new Float32Array(n);
+  }
+
+  addInitialWaves() {
+    this.addWave(this.GW * 0.25, this.GH * 0.55, 3.0);
+    this.addWave(this.GW * 0.65, this.GH * 0.35, 2.5);
+    this.addWave(this.GW * 0.45, this.GH * 0.75, 2.0);
+  }
+
+  addWave(gx, gy, amp) {
+    const r = 4;
+    for (let dy = -r; dy <= r; dy++) {
+      for (let dx = -r; dx <= r; dx++) {
+        const x = Math.round(gx + dx), y = Math.round(gy + dy);
+        if (x < 0 || x >= this.GW || y < 0 || y >= this.GH) continue;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        this.cur[y * this.GW + x] += amp * Math.exp(-d * d / 6);
+      }
+    }
+  }
+
+  step() {
+    const { GW: W, GH: H, cur, prev, next } = this;
+    const c2 = this.cFromIdx(this.speedIdx) ** 2;
+    const d  = this.dampFromIdx(this.dampIdx);
+
+    for (let y = 1; y < H - 1; y++) {
+      for (let x = 1; x < W - 1; x++) {
+        const i  = y * W + x;
+        const lap = cur[i - 1] + cur[i + 1] + cur[i - W] + cur[i + W] - 4 * cur[i];
+        next[i] = (2 * cur[i] - prev[i] + c2 * lap) * d;
+      }
+    }
+
+    const tmp  = this.prev;
+    this.prev  = this.cur;
+    this.cur   = this.next;
+    this.next  = tmp;
+  }
+
+  render() {
+    const { GW: W, GH: H, ctx, w, h, cur } = this;
+    const d = this.imgData.data;
+
+    for (let i = 0, j = 0; i < W * H; i++, j += 4) {
+      const t = Math.max(-1, Math.min(1, cur[i] / 2.8));
+      let r, g, b;
+      if (t < 0) {
+        const s = t + 1;
+        r = (10 + s * 16) | 0;
+        g = (10 + s * 48) | 0;
+        b = (16 + s * 76) | 0;
+      } else if (t < 0.72) {
+        const s = t / 0.72;
+        r = (26 + s * 64) | 0;
+        g = (58 + s * 89) | 0;
+        b = (92 + s * 120) | 0;
+      } else {
+        const s = (t - 0.72) / 0.28;
+        r = (90 + s * 165) | 0;
+        g = (147 + s * 108) | 0;
+        b = (212 + s * 43) | 0;
+      }
+      d[j] = r; d[j + 1] = g; d[j + 2] = b; d[j + 3] = 255;
+    }
+
+    this.offCtx.putImageData(this.imgData, 0, 0);
+    ctx.imageSmoothingEnabled  = true;
+    ctx.imageSmoothingQuality  = 'high';
+    ctx.drawImage(this.offscreen, 0, 0, w, h);
+  }
+
+  frame() {
+    for (let i = 0; i < 3; i++) this.step();
+    this.render();
+  }
+
+  setupInteraction() {
+    const addAt = (cx, cy) => {
+      const r  = this.canvas.getBoundingClientRect();
+      const gx = ((cx - r.left) / r.width) * this.GW;
+      const gy = ((cy - r.top) / r.height) * this.GH;
+      this.addWave(gx, gy, this.ampFromIdx(this.ampIdx) * 2.5);
+    };
+    this.canvas.addEventListener('click', e => addAt(e.clientX, e.clientY));
+    this.canvas.addEventListener('touchstart', e => { e.preventDefault(); addAt(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  }
+
+  setupPauseObserver() {
+    this.pauseIO = new IntersectionObserver(entries => {
+      entries[0].isIntersecting ? this.start() : this.stop();
+    }, { threshold: 0 });
+    this.pauseIO.observe(this.canvas);
+  }
+
+  start() {
+    if (this.running) return;
+    this.running = true;
+    const loop = () => { if (!this.running) return; this.frame(); this.raf = requestAnimationFrame(loop); };
+    this.raf = requestAnimationFrame(loop);
+  }
+
+  stop() {
+    this.running = false;
+    if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+  }
+
+  reset() {
+    this.stop();
+    this.initGrid();
+    this.addInitialWaves();
+    this.render();
+    this.start();
+  }
+}
+
+// ================================================================
+// THE SCREAM — Gray-Scott reaction-diffusion
+// ================================================================
+class ScreamSim {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    this.ctx     = this.canvas.getContext('2d');
+    this.running = false;
+    this.raf     = null;
+
+    this.GW = 128; this.GH = 128;
+    this.feedIdx = 5;
+    this.killIdx = 5;
+    this.diffIdx = 5;
+
+    this.resize();
+    this.initGrid();
+    this.prewarm(1200);
+    this.setupInteraction();
+    this.setupPauseObserver();
+  }
+
+  FFromIdx(i)  { return 0.018 + (i - 1) * 0.004; }
+  kFromIdx(i)  { return 0.052 + (i - 1) * 0.003; }
+  DuFromIdx(i) { return 0.14 + (i - 1) * 0.01; }
+
+  resize() {
+    const rect = this.canvas.parentElement.getBoundingClientRect();
+    const w = Math.max(rect.width, 200);
+    const h = this.canvas.offsetHeight || 280;
+    const dpr = Math.min(devicePixelRatio, 2);
+    this.canvas.width  = w * dpr;
+    this.canvas.height = h * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.w = w; this.h = h;
+    this.offscreen = document.createElement('canvas');
+    this.offscreen.width  = this.GW;
+    this.offscreen.height = this.GH;
+    this.offCtx = this.offscreen.getContext('2d');
+    this.imgData = new ImageData(this.GW, this.GH);
+  }
+
+  initGrid() {
+    const n = this.GW * this.GH;
+    this.u  = new Float32Array(n).fill(1);
+    this.v  = new Float32Array(n);
+    this.nu = new Float32Array(n);
+    this.nv = new Float32Array(n);
+
+    const seeds = [
+      [this.GW * 0.5,  this.GH * 0.5],
+      [this.GW * 0.25, this.GH * 0.3],
+      [this.GW * 0.75, this.GH * 0.7],
+      [this.GW * 0.3,  this.GH * 0.7],
+      [this.GW * 0.7,  this.GH * 0.3],
+    ];
+    for (const [sx, sy] of seeds) {
+      for (let dy = -5; dy <= 5; dy++) {
+        for (let dx = -5; dx <= 5; dx++) {
+          const x = Math.round(sx + dx), y = Math.round(sy + dy);
+          if (x < 0 || x >= this.GW || y < 0 || y >= this.GH) continue;
+          const i = y * this.GW + x;
+          this.u[i] = 0.5 + (Math.random() - 0.5) * 0.1;
+          this.v[i] = 0.25 + (Math.random() - 0.5) * 0.1;
+        }
+      }
+    }
+  }
+
+  step() {
+    const { GW: W, GH: H, u, v, nu, nv } = this;
+    const F  = this.FFromIdx(this.feedIdx);
+    const k  = this.kFromIdx(this.killIdx);
+    const Du = this.DuFromIdx(this.diffIdx);
+    const Dv = Du / 2;
+
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const i  = y * W + x;
+        const ui = u[i], vi = v[i];
+
+        const xm = x > 0 ? i - 1 : i;
+        const xp = x < W - 1 ? i + 1 : i;
+        const ym = y > 0 ? i - W : i;
+        const yp = y < H - 1 ? i + W : i;
+
+        const lu  = u[xm] + u[xp] + u[ym] + u[yp] - 4 * ui;
+        const lv  = v[xm] + v[xp] + v[ym] + v[yp] - 4 * vi;
+        const uvv = ui * vi * vi;
+
+        nu[i] = Math.max(0, Math.min(1, ui + Du * lu - uvv + F * (1 - ui)));
+        nv[i] = Math.max(0, Math.min(1, vi + Dv * lv + uvv - (F + k) * vi));
+      }
+    }
+
+    const tu = this.u; this.u = this.nu; this.nu = tu;
+    const tv = this.v; this.v = this.nv; this.nv = tv;
+  }
+
+  prewarm(n) { for (let i = 0; i < n; i++) this.step(); }
+
+  render() {
+    const { GW: W, GH: H, ctx, w, h, v } = this;
+    const d = this.imgData.data;
+
+    for (let i = 0, j = 0; i < W * H; i++, j += 4) {
+      const vn = Math.min(1, v[i] / 0.28);
+      const vs = vn * vn * (3 - 2 * vn); // smoothstep
+
+      let r, g, b;
+      if (vs < 0.5) {
+        const t = vs * 2;
+        r = (10 + t * 191) | 0;  // #0a0a10 → #bf3a18
+        g = (10 + t * 46)  | 0;
+        b = (16 + t * 10)  | 0;
+      } else {
+        const t = (vs - 0.5) * 2;
+        r = (191 + t * 42)  | 0; // #bf3a18 → #e9612f
+        g = (56  + t * 41)  | 0;
+        b = (26  + t * 21)  | 0;
+      }
+      d[j] = r; d[j + 1] = g; d[j + 2] = b; d[j + 3] = 255;
+    }
+
+    this.offCtx.putImageData(this.imgData, 0, 0);
+    this.ctx.imageSmoothingEnabled = true;
+    this.ctx.imageSmoothingQuality = 'high';
+    this.ctx.drawImage(this.offscreen, 0, 0, w, h);
+  }
+
+  addSpot(gx, gy) {
+    const r = 7;
+    for (let dy = -r; dy <= r; dy++) {
+      for (let dx = -r; dx <= r; dx++) {
+        const x = Math.round(gx + dx), y = Math.round(gy + dy);
+        if (x < 0 || x >= this.GW || y < 0 || y >= this.GH) continue;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d > r) continue;
+        const i = y * this.GW + x;
+        this.u[i] = 0.5 + (Math.random() - 0.5) * 0.1;
+        this.v[i] = Math.min(0.5, this.v[i] + 0.30 * Math.exp(-d * d / 12));
+      }
+    }
+  }
+
+  setupInteraction() {
+    const addAt = (cx, cy) => {
+      const r  = this.canvas.getBoundingClientRect();
+      const gx = ((cx - r.left) / r.width)  * this.GW;
+      const gy = ((cy - r.top)  / r.height) * this.GH;
+      this.addSpot(gx, gy);
+    };
+    this.canvas.addEventListener('click', e => addAt(e.clientX, e.clientY));
+    this.canvas.addEventListener('touchstart', e => { e.preventDefault(); addAt(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  }
+
+  setupPauseObserver() {
+    this.pauseIO = new IntersectionObserver(entries => {
+      entries[0].isIntersecting ? this.start() : this.stop();
+    }, { threshold: 0 });
+    this.pauseIO.observe(this.canvas);
+  }
+
+  frame() {
+    for (let i = 0; i < 8; i++) this.step();
+    this.render();
+  }
+
+  start() {
+    if (this.running) return;
+    this.running = true;
+    const loop = () => { if (!this.running) return; this.frame(); this.raf = requestAnimationFrame(loop); };
+    this.raf = requestAnimationFrame(loop);
+  }
+
+  stop() {
+    this.running = false;
+    if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+  }
+
+  reset() {
+    this.stop();
+    this.initGrid();
+    this.prewarm(1200);
+    this.render();
+    this.start();
+  }
+}
+
+// ================================================================
+// INIT
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => {
+
+  // ---- Complexity tables ----
+  new RevealTable('sn-table', 'sn-replay');
+  new RevealTable('gw-table', 'gw-replay');
+  new RevealTable('ts-table', 'ts-replay');
+
+  // ---- Starry Night ----
+  const sn = new StarryNightSim('sn-canvas');
+
+  initSlider({ id:'sn-n', fillId:'sn-n-fill', thumbId:'sn-n-thumb', valId:'sn-n-val',
+    format: v => Math.round(v).toLocaleString('en-GB'),
+    onChange: v => sn.setN(Math.round(v))
+  });
+  initSlider({ id:'sn-scale', fillId:'sn-scale-fill', thumbId:'sn-scale-thumb', valId:'sn-scale-val',
+    format: v => (0.001 + (v - 1) * 0.001).toFixed(4),
+    onChange: v => { sn.scaleIdx = v; }
+  });
+  initSlider({ id:'sn-speed', fillId:'sn-speed-fill', thumbId:'sn-speed-thumb', valId:'sn-speed-val',
+    format: v => ((0.3 + (v - 1) * 0.2) / 1.0).toFixed(1) + '×',
+    onChange: v => { sn.speedIdx = v; }
+  });
+  document.getElementById('sn-run')?.addEventListener('click', () => { if (!sn.running) sn.start(); });
+  document.getElementById('sn-reset')?.addEventListener('click', () => sn.reset());
+
+  // ---- Great Wave ----
+  const gw = new GreatWaveSim('gw-canvas');
+
+  initSlider({ id:'gw-speed', fillId:'gw-speed-fill', thumbId:'gw-speed-thumb', valId:'gw-speed-val',
+    format: v => (0.10 + (v - 1) * 0.045).toFixed(2),
+    onChange: v => { gw.speedIdx = v; }
+  });
+  initSlider({ id:'gw-damp', fillId:'gw-damp-fill', thumbId:'gw-damp-thumb', valId:'gw-damp-val',
+    format: v => (0.988 + (v - 1) * 0.0015).toFixed(3),
+    onChange: v => { gw.dampIdx = v; }
+  });
+  initSlider({ id:'gw-amp', fillId:'gw-amp-fill', thumbId:'gw-amp-thumb', valId:'gw-amp-val',
+    format: v => (0.5 + (v - 1) * 0.4).toFixed(1),
+    onChange: v => { gw.ampIdx = v; }
+  });
+  document.getElementById('gw-run')?.addEventListener('click', () => { if (!gw.running) gw.start(); });
+  document.getElementById('gw-reset')?.addEventListener('click', () => gw.reset());
+
+  // ---- The Scream ----
+  const ts = new ScreamSim('ts-canvas');
+
+  initSlider({ id:'ts-feed', fillId:'ts-feed-fill', thumbId:'ts-feed-thumb', valId:'ts-feed-val',
+    format: v => (0.018 + (v - 1) * 0.004).toFixed(4),
+    onChange: v => { ts.feedIdx = v; }
+  });
+  initSlider({ id:'ts-kill', fillId:'ts-kill-fill', thumbId:'ts-kill-thumb', valId:'ts-kill-val',
+    format: v => (0.052 + (v - 1) * 0.003).toFixed(4),
+    onChange: v => { ts.killIdx = v; }
+  });
+  initSlider({ id:'ts-diff', fillId:'ts-diff-fill', thumbId:'ts-diff-thumb', valId:'ts-diff-val',
+    format: v => (0.14 + (v - 1) * 0.01).toFixed(2) + '  (Du)',
+    onChange: v => { ts.diffIdx = v; }
+  });
+  document.getElementById('ts-run')?.addEventListener('click', () => { if (!ts.running) ts.start(); });
+  document.getElementById('ts-reset')?.addEventListener('click', () => ts.reset());
+
+  // ---- Resize handler ----
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      sn?.resize(); sn?.reset();
+      gw?.resize(); gw?.initGrid(); gw?.addInitialWaves(); gw?.render();
+      ts?.resize(); ts?.initGrid(); ts?.prewarm(1200); ts?.render();
+    }, 200);
+  });
+});
+</script>
+</body>
+</html>
