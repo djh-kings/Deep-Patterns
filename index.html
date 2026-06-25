@@ -999,8 +999,8 @@ class StarryNightSim {
         }
       }
 
-      const nx = p.x + vx * spd * 0.016;
-      const ny = p.y + vy * spd * 0.016;
+      const nx = p.x + vx * spd * 1.1;
+      const ny = p.y + vy * spd * 1.1;
       const al = 0.28 + 0.62 * Math.sin((p.age / p.life) * Math.PI);
 
       ctx.strokeStyle = `rgba(252,214,82,${al.toFixed(3)})`;
